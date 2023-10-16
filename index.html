@@ -6,6 +6,9 @@
   <title>Tertis</title>
   <script defer src="base.js"></script>
   <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
 </head>
 <body>
   <main>
@@ -13,6 +16,17 @@
       <tbody id="player1"></tbody>
     </table>
   </main>
-  <audio id="music" loop src="tertis2.mp3"></audio>
+  <audio id="music" loop src="tertis3.mp3" preload></audio>
+  <section id="instructions">
+    <table>
+      <tr>
+        <td>[Arrow keys] Movement</td>
+        <td>[M] Toggle music</td>
+      </tr>
+      <tr>
+        <td>[Spacebar] Rotate</td>
+      </tr>
+    </table>
+  </section>
 </body>
 </html>

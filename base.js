@@ -27,7 +27,7 @@ const isEmpty = (row, column) => {
 let game = [];
 for (let index = 0; index < 15; index++) {
   game.push([]);
-  for (let index2 = 0; index2 < 10; index2++) {
+  for (let index2 = 0; index2 < 8; index2++) {
     game[index].push({});
   }
 }
@@ -35,19 +35,21 @@ for (let index = 0; index < 15; index++) {
 render(game);
 
 const spawnRandomBlocks = () => {
-  if (game[1].some((c) => c?.color)) {
+  explode();
+  if (!isEmpty(1, 3) || !isEmpty(1, 4)) {
     document.removeEventListener('keydown', keyMap);
     clearInterval(runner);
+    lost();
   }
 
-  const colors = ['rgb(197, 55, 55)', 'rgb(55, 100, 197)', 'rgb(55, 197, 62)', 'rgb(197, 183, 55)']; // Cores disponíveis
+  const colors = ['rgb(197, 55, 55)', 'rgb(55, 100, 197)', 'rgb(55, 197, 62)', 'rgb(197, 183, 55)'];
   const blocks = [];
   for (let i = 0; i < 2; i++) {
     const color = colors[Math.floor(Math.random() * colors.length)];
     blocks.push({ color, active: true });
   }
-  game[0][4] = {...blocks[0], main: true, second: {row: 0, column: 5}, secondPos: 'right'};
-  game[0][5] = {...blocks[1], main: false};
+  game[0][3] = {...blocks[0], main: true, second: {row: 0, column: 4}, secondPos: 'right'};
+  game[0][4] = {...blocks[1], main: false};
   return blocks;
 };
 
@@ -376,6 +378,7 @@ spawnRandomBlocks();
 render(game);
 
 let started = false;
+let died = false;
 let gamePaused = false;
 let runner = null;
 const keyMap = (e) => {
@@ -388,10 +391,14 @@ const keyMap = (e) => {
       spawn();
       explode();
     }, 1000);
-    music.volume = 0.4;
+    music.volume = 0.3;
     music.play();
   }
   switch (e.key) {
+    case 'm':
+      music.muted = music.muted ? false : true;
+      localStorage.setItem('mute', music.muted);
+      break;
     case ' ':
       rotate();
       break;
@@ -423,7 +430,7 @@ function pauseGame() {
 
   function resumeGame() {
     gamePaused = false;
-    started && music.play();
+    started && !died && music.play();
 }
 
 window.addEventListener('blur', () => {
@@ -437,3 +444,25 @@ window.addEventListener('focus', () => {
 window.addEventListener('beforeunload', () => {
     pauseGame();
 });
+
+const lost = () => {
+  died = true;
+  let atual = 1;
+  music.preservesPitch = false;
+  const slowmo = setInterval(() => {
+    atual -= 0.1;
+    music.playbackRate = atual > 0.25 ? atual : 0.25;
+    music.volume = atual;
+  }, 800);
+  setTimeout(() => {
+    clearInterval(slowmo);
+    music.pause();
+  }, 8000);
+  document.body.classList.add('lost');
+}
+
+const loadOptions = () => {
+  const muted = localStorage.getItem('mute');
+  if (muted === 'true') music.muted = true;
+};
+loadOptions();

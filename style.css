@@ -1,9 +1,16 @@
 body {
   background-color: black;
+  overflow: hidden;
+  padding: 0;
+  margin: 0;
+  font-family: 'VT323', monospace;
+  color: white;
 }
 
-table {
+main table {
   user-select: none;
+  transition: filter 5s ease;
+  filter: none;
   & td {
     background-color: rgb(51, 51, 51);
     width: 30px;
@@ -17,4 +24,20 @@ main {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+body.lost main table {
+  filter: grayscale(1);
+}
+
+#instructions {
+  position: fixed;
+  bottom: 0px;
+  left: 0px;
+  width: 100%;
+  font-size: 22px;
+  padding-bottom: 30px;
+  & td {
+    padding-left: 30px;
+  }
 }
