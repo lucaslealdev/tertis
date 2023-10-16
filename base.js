@@ -35,7 +35,6 @@ for (let index = 0; index < 15; index++) {
 render(game);
 
 const spawnRandomBlocks = () => {
-  explode();
   if (!isEmpty(1, 3) || !isEmpty(1, 4)) {
     document.removeEventListener('keydown', keyMap);
     clearInterval(runner);
@@ -377,19 +376,22 @@ const explode = () => {
 spawnRandomBlocks();
 render(game);
 
+let startTime = new Date();
 let started = false;
 let died = false;
 let gamePaused = false;
 let runner = null;
 const keyMap = (e) => {
   if (!started) {
+    startTime = new Date();
     started = true;
     runner = setInterval(() => {
       if (gamePaused) return;
       down();
       checkLocked();
-      spawn();
       explode();
+      spawn();
+      updateTimer();
     }, 1000);
     music.volume = 0.3;
     music.play();
@@ -459,6 +461,7 @@ const lost = () => {
     music.pause();
   }, 8000);
   document.body.classList.add('lost');
+  myModal.checked = true;
 }
 
 const loadOptions = () => {
@@ -466,3 +469,9 @@ const loadOptions = () => {
   if (muted === 'true') music.muted = true;
 };
 loadOptions();
+
+const updateTimer = () => {
+  const now = new Date();
+  const seconds = Math.floor((now.getTime() - startTime.getTime()) / 1000);
+  time.innerHTML = `${seconds}s`;
+};

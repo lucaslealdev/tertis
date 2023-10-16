@@ -7,7 +7,7 @@ body {
   color: white;
 }
 
-main table {
+body > main table {
   user-select: none;
   transition: filter 5s ease;
   filter: none;
@@ -19,14 +19,15 @@ main table {
   }
 }
 
-main {
+body > main {
   height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
 }
 
-body.lost main table {
+body.lost > main table {
   filter: grayscale(1);
 }
 
@@ -40,4 +41,20 @@ body.lost main table {
   & td {
     padding-left: 30px;
   }
+}
+
+main header {
+  display: flex;
+  width: calc(8 * 36px);
+  font-size: 48px;
+}
+
+#score {
+  width: 50%;
+  text-align: right;
+}
+
+#time {
+  width: 50%;
+  text-align: left;
 }

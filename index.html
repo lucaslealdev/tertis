@@ -9,9 +9,14 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/ellegantcss/ellegant@1.1.2/ellegant.min.css">
 </head>
 <body>
   <main>
+    <header>
+      <section id="time">0s</section>
+      <section id="score">0</section>
+    </header>
     <table>
       <tbody id="player1"></tbody>
     </table>
@@ -28,5 +33,24 @@
       </tr>
     </table>
   </section>
+
+  <input type="checkbox" class="elle-checkbox" id="myModal">
+  <dialog open="" class="elle-modal">
+    <section class="elle-animated-top">
+      <header>
+        <h5>Oops</h5>
+        <label class="elle-label" for="myModal" role="button" aria-pressed="false">×</label>
+      </header>
+      <main>
+        <h3>You lost 😔</h3>
+        <p>Some surprises are more unexpected than others, which doesn't mean you shouldn't pay attention to them all.</p>
+        <p>You can always play again.</p>
+      </main>
+      <footer>
+        <label class="elle-label style-elle-btn" for="myModal" role="button" aria-pressed="false" onclick="location.reload();">Play again!</label>
+      </footer>
+    </section>
+  </dialog>
+
 </body>
 </html>
