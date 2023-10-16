@@ -353,6 +353,10 @@ const floating = () => {
   return false;
 }
 
+const emptyBoard = () => {
+  return game.every((r) => r.every((c) => c.active || !c.color));
+};
+
 const explode = () => {
   for (row in game) {
     for (column in game[row]) {
@@ -361,11 +365,13 @@ const explode = () => {
       if (pixel.active) continue;
       const group = getBrothers(+row, +column, [JSON.stringify([+row, +column])]);
       if (group.length > 3) {
+        doScore(group.length * 10)
         for (coords of group) {
           const r = JSON.parse(coords)[0];
           const c = JSON.parse(coords)[1];
           game[r][c] = {};
         }
+        if (emptyBoard()) doScore(10000);
       }
     }
   }
@@ -475,3 +481,12 @@ const updateTimer = () => {
   const seconds = Math.floor((now.getTime() - startTime.getTime()) / 1000);
   time.innerHTML = `${seconds}s`;
 };
+
+let multiplier = 1;
+let points = 0;
+
+const doScore = (p) => {
+  const add = multiplier * p;
+  points += add;
+  score.innerHTML = points;
+}
