@@ -366,12 +366,14 @@ const explode = () => {
       if (pixel.active) continue;
       const group = getBrothers(+row, +column, [JSON.stringify([+row, +column])]);
       if (group.length > 3) {
-        doScore(group.length * 10)
         for (coords of group) {
           const r = JSON.parse(coords)[0];
           const c = JSON.parse(coords)[1];
           game[r][c] = {};
         }
+        doScore(group.length * 10);
+        tec.currentTime = 0;
+        tec.play();
         clearInterval(runner);
         speed -= 35;
         runner = setInterval(looper, speed);
