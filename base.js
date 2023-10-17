@@ -319,7 +319,8 @@ const getBrothers = (row, column, capturados = []) => {
   let acumulado = [];
   for(coord of brothers) {
     const rc = JSON.parse(coord);
-    acumulado = getBrothers(rc[0], rc[1], [...brothers, ...capturados]);
+    const unique = Array.from(new Set([...acumulado, ...brothers, ...capturados]));
+    acumulado = getBrothers(rc[0], rc[1], unique);
   }
   return acumulado;
 }
@@ -490,3 +491,26 @@ const doScore = (p) => {
   points += add;
   score.innerHTML = points;
 }
+
+
+
+const debug = () => {
+  document.body.addEventListener('click', (e) => {
+    if (!e.target.dataset.row) return;
+    const row = +e.target.dataset.row;
+    const column = +e.target.dataset.column;
+    const colors = ['rgb(197, 55, 55)', 'rgb(55, 100, 197)', 'rgb(55, 197, 62)', 'rgb(197, 183, 55)'];
+    const pixel = game[row][column];
+    if (pixel.color) {
+      const index = colors.indexOf(pixel.color);
+      if (colors[index+1]) {
+        pixel.color = colors[index+1];
+      } else {
+        delete pixel.color;
+      }
+    } else {
+      pixel.color = colors[0];
+    }
+    render(game);
+  });
+};
