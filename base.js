@@ -25,7 +25,7 @@ const isEmpty = (row, column) => {
 }
 
 let game = [];
-for (let index = 0; index < 15; index++) {
+for (let index = 0; index < 12; index++) {
   game.push([]);
   for (let index2 = 0; index2 < 8; index2++) {
     game[index].push({});
@@ -372,6 +372,9 @@ const explode = () => {
           const c = JSON.parse(coords)[1];
           game[r][c] = {};
         }
+        clearInterval(runner);
+        speed -= 35;
+        runner = setInterval(looper, speed);
         if (emptyBoard()) doScore(10000);
       }
     }
@@ -383,6 +386,16 @@ const explode = () => {
 spawnRandomBlocks();
 render(game);
 
+let speed = 1000;
+const looper = () => {
+  if (gamePaused) return;
+  down();
+  checkLocked();
+  explode();
+  spawn();
+  updateTimer();
+};
+
 let startTime = new Date();
 let started = false;
 let died = false;
@@ -392,14 +405,7 @@ const keyMap = (e) => {
   if (!started) {
     startTime = new Date();
     started = true;
-    runner = setInterval(() => {
-      if (gamePaused) return;
-      down();
-      checkLocked();
-      explode();
-      spawn();
-      updateTimer();
-    }, 1000);
+    runner = setInterval(looper, speed);
     music.volume = 0.3;
     music.play();
   }
@@ -491,8 +497,6 @@ const doScore = (p) => {
   points += add;
   score.innerHTML = points;
 }
-
-
 
 const debug = () => {
   document.body.addEventListener('click', (e) => {
