@@ -107,6 +107,11 @@ const checkLocked = () => {
   }
 }
 
+const mute = () => {
+  music.muted = music.muted ? false : true;
+  localStorage.setItem('mute', music.muted);
+};
+
 const rotate = () => {
   let {row, column} = activeIndex();
   let main = game[row][column];
@@ -375,7 +380,7 @@ const explode = () => {
         tec.currentTime = 0;
         tec.play();
         clearInterval(runner);
-        speed -= 35;
+        speed -= 10;
         runner = setInterval(looper, speed);
         if (emptyBoard()) doScore(10000);
       }
@@ -403,7 +408,7 @@ let started = false;
 let died = false;
 let gamePaused = false;
 let runner = null;
-const keyMap = (e) => {
+const start = () => {
   if (!started) {
     startTime = new Date();
     started = true;
@@ -411,10 +416,12 @@ const keyMap = (e) => {
     music.volume = 0.3;
     music.play();
   }
+}
+const keyMap = (e) => {
+  start();
   switch (e.key) {
     case 'm':
-      music.muted = music.muted ? false : true;
-      localStorage.setItem('mute', music.muted);
+      mute();
       break;
     case ' ':
       rotate();
@@ -439,6 +446,52 @@ const keyMap = (e) => {
 }
 
 document.addEventListener('keydown', keyMap);
+
+async function gamepadButtonPress(listeners) {
+  const lastStates = [];
+
+  while (true) {
+    const gamepads = [...navigator.getGamepads()].filter(Boolean);
+
+    if (gamepads.length === 0) {
+      await new Promise((resolve) => {
+        addEventListener('gamepadconnected', () => resolve(), { once: true });
+      });
+      continue;
+    }
+
+    await new Promise((r) => requestAnimationFrame(r));
+
+    for (const gamepad of gamepads) {
+      const state = gamepad.buttons.map((button) => button.pressed);
+      const lastState = lastStates[gamepad.index] || state.map(() => false);
+      for (const [buttonIndex, callback] of Object.entries(listeners)) {
+        const wasPressed = lastState[buttonIndex];
+        const pressed = state[buttonIndex];
+        if (pressed && !wasPressed) {
+          start();
+          callback();
+          checkLocked();
+          spawn();
+        }
+      }
+
+      lastStates[gamepad.index] = state;
+    }
+  }
+}
+
+// Example usage:
+gamepadButtonPress({
+  14: () => left(),
+  15: () => right(),
+  13: () => down(),
+  9: () => mute(),
+  0: () => rotate(),
+  1: () => rotate(),
+  2: () => rotate(),
+  3: () => rotate(),
+});
 
 function pauseGame() {
     gamePaused = true;
