@@ -447,51 +447,32 @@ const keyMap = (e) => {
 
 document.addEventListener('keydown', keyMap);
 
-async function gamepadButtonPress(listeners) {
-  const lastStates = [];
+const button = (callback) => {
+  start();
+  callback();
+  checkLocked();
+  spawn();
+};
+const gamepad = new GamepadController(0);
+gamepad.onButtonPress('cross', e => !gamePaused && button(rotate));
+gamepad.onButtonHold('cross', e => !gamePaused && button(rotate));
 
-  while (true) {
-    const gamepads = [...navigator.getGamepads()].filter(Boolean);
+gamepad.onButtonPress('start', e => button(gamePaused ? resumeGame : pauseGame));
+gamepad.onButtonPress('select', e => !gamePaused && button(mute));
 
-    if (gamepads.length === 0) {
-      await new Promise((resolve) => {
-        addEventListener('gamepadconnected', () => resolve(), { once: true });
-      });
-      continue;
-    }
+gamepad.onButtonPress('down', e => !gamePaused && button(down));
+gamepad.onButtonHold('down', e => !gamePaused && button(down));
 
-    await new Promise((r) => requestAnimationFrame(r));
+gamepad.onButtonPress('right', e => !gamePaused && button(right));
+gamepad.onButtonHold('right', e => !gamePaused && button(right));
 
-    for (const gamepad of gamepads) {
-      const state = gamepad.buttons.map((button) => button.pressed);
-      const lastState = lastStates[gamepad.index] || state.map(() => false);
-      for (const [buttonIndex, callback] of Object.entries(listeners)) {
-        const wasPressed = lastState[buttonIndex];
-        const pressed = state[buttonIndex];
-        if (pressed && !wasPressed) {
-          start();
-          callback();
-          checkLocked();
-          spawn();
-        }
-      }
+gamepad.onButtonPress('left', e => !gamePaused && button(left));
+gamepad.onButtonHold('left', e => !gamePaused && button(left));
 
-      lastStates[gamepad.index] = state;
-    }
-  }
-}
-
-// Example usage:
-gamepadButtonPress({
-  14: () => left(),
-  15: () => right(),
-  13: () => down(),
-  9: () => mute(),
-  0: () => rotate(),
-  1: () => rotate(),
-  2: () => rotate(),
-  3: () => rotate(),
-});
+gamepad.onButtonPress('R1', e => !gamePaused && (button(right) || button(right)));
+gamepad.onButtonHold('R1', e => !gamePaused && (button(right) || button(right)));
+gamepad.onButtonPress('L1', e => !gamePaused && (button(left) || button(left)));
+gamepad.onButtonHold('L1', e => !gamePaused && (button(left) || button(left)));
 
 function pauseGame() {
     gamePaused = true;
