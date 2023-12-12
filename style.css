@@ -9,7 +9,7 @@ body {
 
 body > main table {
   user-select: none;
-  transition: filter 5s ease;
+  transition: filter 5s ease, transform 10s ease;
   filter: none;
   & td {
     background-color: rgb(51, 51, 51);
@@ -29,6 +29,7 @@ body > main {
 
 body.lost > main table {
   filter: grayscale(1);
+  transform: scale(8.6) rotate(30deg);
 }
 
 #instructions {
